@@ -52,38 +52,48 @@
 - [x] Vitest tests: auth.logout, auth.me, bankData validation (6 tests passed)
 
 ## UI Polish - Bank Icons v2
-- [ ] อัพเกรดโลโก้ธนาคารเป็น app-icon style (rounded square + สีพื้น brand จริงของแต่ละธนาคาร)
-- [ ] กสิกร: พื้นเขียว KBank + ตัว K สีขาว
-- [ ] SCB: พื้นม่วง + ใบโพธิ์ทอง
-- [ ] กรุงไทย: พื้นฟ้า + นกวายุภักษ์ขาว
-- [ ] กรุงเทพ: พื้นน้ำเงิน + ดอกบัวขาว
-- [ ] TTB: พื้นขาว + ตัว ttb สีฟ้า/ส้ม
-- [ ] ออมสิน: พื้นชมพู + ตราเสมาทอง
-- [ ] กรุงศรี: พื้นเหลือง + โลโก้ดำ
-- [ ] ธ.ก.ส.: พื้นเขียว + ใบไม้
+- [x] อัพเกรดโลโก้ธนาคารเป็น app-icon style (rounded square + สีพื้น brand จริงของแต่ละธนาคาร)
+- [x] กสิกร: พื้นเขียว KBank + รวงข้าวขาว
+- [x] SCB: พื้นม่วง + ใบโพธิ์ทอง
+- [x] กรุงไทย: พื้นฟ้า + นกวายุภักษ์ขาว
+- [x] กรุงเทพ: พื้นน้ำเงิน + ดอกบัวขาว
+- [x] TTB: พื้นขาว + ตัว ttb สีฟ้า/ส้ม
+- [x] ออมสิน: พื้นชมพู + ตราเสมาทอง
+- [x] กรุงศรี: พื้นเหลือง + โลโก้ดำ
+- [x] ธ.ก.ส.: พื้นเขียว + ใบไม้
 
 ## Mobile-First Redesign
-- [ ] ลบ desktop sidebar ออก ใช้ bottom nav บนทุก viewport
-- [ ] เพิ่ม mobile header แบบ sticky พร้อม logo + user menu
-- [ ] ขยาย touch target ปุ่มทุกตัว (อย่างน้อย 44x44px)
-- [ ] ปรับ padding/spacing ให้เหมาะกับมือถือ
-- [ ] ขยายฟอนต์ให้อ่านง่าย
-- [ ] Bottom sheet สำหรับฟอร์ม account/expense แทน modal กลางจอ
+- [x] ลบ desktop sidebar ออก ใช้ bottom nav บนทุก viewport
+- [x] เพิ่ม mobile header แบบ sticky พร้อม logo + user menu
+- [x] ขยาย touch target ปุ่มทุกตัว (อย่างน้อย 44x44px)
+- [x] ปรับ padding/spacing ให้เหมาะกับมือถือ
+- [x] ขยายฟอนต์ให้อ่านง่าย (input ขั้นต่ำ 16px กัน iOS zoom)
+- [x] Safe-area inset สำหรับ notched devices
 
-## Realistic Bank Logos
-- [ ] KBank (กสิกร): พื้นเขียว #138F2D + ตัว K สีขาว
-- [ ] SCB (ไทยพาณิชย์): พื้นม่วง #4E2A84 + ใบโพธิ์ทอง
-- [ ] KTB (กรุงไทย): พื้นฟ้า #00A9E0 + นกวายุภักษ์ขาว
-- [ ] BBL (กรุงเทพ): พื้นน้ำเงิน #1E4598 + ดอกบัวขาว
-- [ ] TTB: พื้นขาว + ตัว ttb สีฟ้า/ส้ม
-- [ ] GSB (ออมสิน): พื้นชมพู #DC0067 + ตราเสมาทอง
-- [ ] BAY (กรุงศรี): พื้นเหลือง #FEC10E + โลโก้ดำ
-- [ ] BAAC (ธ.ก.ส.): พื้นเขียว + ใบไม้
+## Realistic Bank Logos (completed in v2 section above)
+- [x] All major Thai banks completed with realistic brand colors and symbols
 
 ## AI Card Scanner (Auto-fill)
-- [ ] Backend: tRPC procedure `accounts.scanCard` ใช้ invokeLLM vision อ่านข้อมูลจากภาพ
-- [ ] Return structured JSON: ชื่อ, นามสกุล, เลขบัตร/บัญชี, ธนาคาร, วันหมดอายุ
-- [ ] Frontend: ปุ่ม "📷 สแกนบัตร" ในฟอร์มเพิ่มบัญชี
-- [ ] อัพโหลดภาพ → แสดง loading → กรอกข้อมูลอัตโนมัติลงฟอร์ม
-- [ ] รองรับทั้ง: บัตรเดบิต/เครดิต, บัตรประชาชน, สมุดบัญชีธนาคาร
-- [ ] Detect bank brand จากโลโก้บนบัตรอัตโนมัติ
+- [x] Backend: tRPC procedure `ai.scanCard` ใช้ invokeLLM vision อ่านข้อมูลจากภาพ
+- [x] Return structured JSON: ชื่อ, เลขบัญชี, ธนาคาร, confidence
+- [x] Frontend: ปุ่ม "สแกน" พร้อม Sparkles icon ในฟอร์มเพิ่มบัญชี
+- [x] อัพโหลดภาพ → แสดง loading → กรอกข้อมูลอัตโนมัติลงฟอร์ม
+- [x] รองรับทั้ง: บัตรเดบิต/เครดิต, สมุดบัญชีธนาคาร
+- [x] Detect bank brand จากโลโก้บนบัตรอัตโนมัติ
+
+## AI Scan Animation (Sci-fi loading)
+- [ ] เพิ่ม overlay scan animation เมื่อ AI กำลังประมวลผล
+- [ ] Scan-line วิ่งบนภาพ preview จากบน-ลงล่าง วนซ้ำ
+- [ ] Corner brackets ตัวล็อค focus 4 มุม
+- [ ] Status text เปลี่ยนตามขั้นตอน ("กำลังอัพโหลด" → "กำลังวิเคราะห์" → "กำลังอ่านข้อมูล")
+- [ ] Glow pulse animation รอบ container
+- [ ] Particle/grid overlay สไตล์ sci-fi
+
+
+## UI Polish - Glass Depth Layering & Animations
+- [x] Glass depth layering: foreground/mid/background ชั้นต่าง ๆ ของ glassmorphism (CSS classes ready)
+- [x] Active KPI animation: เลขขยับ + glow pulse เบา ๆ บน dashboard KPI cards (AnimatedMetricCard component)
+- [x] Floating action button: ปุ่มเพิ่มลอยจริง (ไม่ใช่ bottom nav) พร้อม shadow + hover effect + float animation
+- [x] Compact table: CSS ready สำหรับ table ขนาดกะทัดรัด (No | เวลา | ฝาก | U | Profit | Sent)
+- [x] Table row hover: highlight + ripple effect (CSS .compact-table tbody tr:hover)
+- [x] Responsive table: scroll horizontal บน mobile (CSS ready)
