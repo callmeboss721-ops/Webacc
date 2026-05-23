@@ -579,28 +579,11 @@ export default function CEEmpire() {
   const [editAccount, setEditAccount] = useState<any>(null);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
 
-  // Show loading
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: '"Prompt",sans-serif' }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ width: 56, height: 56, borderRadius: 18, display: "grid", placeItems: "center", margin: "0 auto 16px", background: "linear-gradient(135deg, rgba(56,241,255,.28), rgba(37,99,255,.22))", border: "1px solid rgba(56,241,255,.52)", animation: "pulse 1.5s infinite" }}>
-            <span style={{ fontFamily: '"Orbitron",sans-serif', fontSize: 16, fontWeight: 900, color: "#38F1FF" }}>CE</span>
-          </div>
-          <div style={{ color: "#9FB2CE", fontSize: 14 }}>กำลังโหลด...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login if not authenticated
-  if (!isAuthenticated) return <LoginScreen />;
-
-  // tRPC queries
-  const statsQ = trpc.dashboard.stats.useQuery();
-  const accountsQ = trpc.accounts.list.useQuery({ search: accountSearch, bankCode: bankFilter === "all" ? undefined : bankFilter });
-  const agentsQ = trpc.agents.list.useQuery();
-  const expensesQ = trpc.expenses.list.useQuery();
+  // tRPC queries - MUST be called every render. Use `enabled` to gate fetching when not authenticated.
+  const statsQ = trpc.dashboard.stats.useQuery(undefined, { enabled: isAuthenticated });
+  const accountsQ = trpc.accounts.list.useQuery({ search: accountSearch, bankCode: bankFilter === "all" ? undefined : bankFilter }, { enabled: isAuthenticated });
+  const agentsQ = trpc.agents.list.useQuery(undefined, { enabled: isAuthenticated });
+  const expensesQ = trpc.expenses.list.useQuery(undefined, { enabled: isAuthenticated });
   const utils = trpc.useUtils();
 
   const refreshAll = useCallback(() => {
@@ -621,6 +604,23 @@ export default function CEEmpire() {
   };
 
   const stats = statsQ.data;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: '"Prompt",sans-serif' }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 56, height: 56, borderRadius: 18, display: "grid", placeItems: "center", margin: "0 auto 16px", background: "linear-gradient(135deg, rgba(56,241,255,.28), rgba(37,99,255,.22))", border: "1px solid rgba(56,241,255,.52)", animation: "pulse 1.5s infinite" }}>
+            <span style={{ fontFamily: '"Orbitron",sans-serif', fontSize: 16, fontWeight: 900, color: "#38F1FF" }}>CE</span>
+          </div>
+          <div style={{ color: "#9FB2CE", fontSize: 14 }}>กำลังโหลด...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login if not authenticated
+  if (!isAuthenticated) return <LoginScreen />;
 
   // ===== SIDEBAR MENU =====
   const menuItems: { id: Page; label: string; icon: React.ElementType; color: string }[] = [
