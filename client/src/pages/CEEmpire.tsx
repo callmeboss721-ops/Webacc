@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-(paste of updated CEEmpire.tsx)
-=======
 import React, { useState, useCallback, useRef } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -1399,4 +1396,3 @@ function DocumentsPage({ expenses, accounts, agents, onRefresh }: { expenses: an
     </div>
   );
 }
->>>>>>> Stashed changes
