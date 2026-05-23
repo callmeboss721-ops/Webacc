@@ -109,9 +109,10 @@ function NeonBtn({ icon: Icon, onClick, color = "cyan", title = "", size = 16 }:
 }
 
 // ===== GLASS CARD =====
-function GlassCard({ children, className = "", style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+function GlassCard({ children, className = "", style = {}, depth = "mid" }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; depth?: "foreground" | "mid" | "background" }) {
+  const depthClass = `glass-${depth}`;
   return (
-    <div className={`glass rounded-3xl p-4 ${className}`} style={style}>
+    <div className={`${depthClass} rounded-3xl p-4 ${className}`} style={style}>
       {children}
     </div>
   );
@@ -368,11 +369,12 @@ function AccountFormModal({ open, onClose, editData, onSuccess }: {
                   position: "relative", borderRadius: 14, overflow: "hidden",
                   border: scanMut.isPending ? "1.5px solid rgba(56,241,255,.55)" : "1px solid rgba(46,242,177,.45)",
                   boxShadow: scanMut.isPending
-                    ? "0 0 24px rgba(56,241,255,.45), inset 0 0 18px rgba(56,241,255,.18)"
+                    ? "0 0 24px rgba(56,241,255,.45), inset 0 0 18px rgba(56,241,255,.18), 0 0 40px rgba(56,241,255,.35)"
                     : "0 0 14px rgba(46,242,177,.28)",
                   background: "#020812",
                   aspectRatio: "16 / 9", maxHeight: 180,
                   transition: "box-shadow .25s, border-color .25s",
+                  animation: scanMut.isPending ? "scan-container-pulse 1.8s ease-in-out infinite" : "none",
                 }}>
                   <img src={previewUrl} alt="card preview"
                     style={{ width: "100%", height: "100%", objectFit: "contain", display: "block",
@@ -939,7 +941,7 @@ export default function CEEmpire() {
           {/* DASHBOARD PAGE */}
           {page === "dashboard" && (
             <div className="animate-fade-up">
-              <GlassCard>
+              <GlassCard depth="foreground">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                   <div>
                     <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-.04em" }}>Dashboard</div>
@@ -977,7 +979,7 @@ export default function CEEmpire() {
 
               {/* Recent Accounts */}
               {(accountsQ.data?.length ?? 0) > 0 && (
-                <GlassCard className="mt-3">
+                <GlassCard className="mt-3" depth="mid">
                   <div style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }}>บัญชีล่าสุด</div>
                   <div style={{ display: "grid", gap: 8 }}>
                     {accountsQ.data?.slice(0, 3).map((acc: any) => (
@@ -1002,7 +1004,7 @@ export default function CEEmpire() {
           {/* ACCOUNTS PAGE */}
           {page === "accounts" && (
             <div className="animate-fade-up">
-              <GlassCard>
+              <GlassCard depth="foreground">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <div>
                     <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-.04em" }}>บัญชีธนาคาร</div>
@@ -1050,7 +1052,7 @@ export default function CEEmpire() {
           {/* PAYMENT PAGE */}
           {page === "payment" && (
             <div className="animate-fade-up">
-              <GlassCard>
+              <GlassCard depth="foreground">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <div>
                     <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-.04em" }}>ชำระเงิน / รายจ่าย</div>
@@ -1070,10 +1072,52 @@ export default function CEEmpire() {
                     <div style={{ fontSize: 12, marginTop: 6 }}>กดปุ่ม "เพิ่มรายการ" เพื่อเริ่มต้น</div>
                   </div>
                 ) : (
-                  <div style={{ display: "grid", gap: 10 }}>
-                    {expensesQ.data?.map((exp: any) => (
-                      <ExpenseCard key={exp.id} expense={exp} agents={agentsQ.data ?? []} onRefresh={refreshAll} />
-                    ))}
+                  <div style={{ overflowX: "auto", marginTop: 12 }}>
+                    <table className="compact-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: "5%" }}>No</th>
+                          <th style={{ width: "18%" }}>เวลา</th>
+                          <th style={{ width: "15%" }}>ทีมงาน</th>
+                          <th style={{ width: "12%" }}>ประเภท</th>
+                          <th style={{ width: "15%" }}>หมวดหมู่</th>
+                          <th style={{ width: "15%" }}>จำนวน</th>
+                          <th style={{ width: "15%" }}>สถานะ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {expensesQ.data?.map((exp: any, idx: number) => {
+                          const timeStr = exp.createdAt ? new Date(exp.createdAt).toLocaleString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-';
+                          const agent = agentsQ.data?.find((a: any) => a.id === exp.agentId);
+                          const amountNum = parseInt(exp.amount?.replace(/\D/g, '') || '0');
+                          const typeLabel = exp.type === 'due' ? '\u0e04\u0e49\u0e32\u0e07' : '\u0e04\u0e37\u0e19';
+                          return (
+                            <tr key={exp.id} style={{ cursor: "pointer" }}>
+                              <td>{idx + 1}</td>
+                              <td style={{ fontSize: 11 }}>{timeStr}</td>
+                              <td style={{ color: "#2EF2B1", fontWeight: 700 }}>{agent?.name || '-'}</td>
+                              <td style={{ color: "#FFD66B", fontWeight: 700 }}>{typeLabel}</td>
+                              <td style={{ color: "#8B5CFF", fontWeight: 700 }}>{exp.category || '-'}</td>
+                              <td style={{ color: "#38F1FF", fontWeight: 700 }}>{amountNum.toLocaleString()}</td>
+                              <td>
+                                <span style={{
+                                  display: "inline-block",
+                                  padding: "4px 10px",
+                                  borderRadius: 8,
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  background: exp.status === "paid" ? "rgba(46,242,177,.18)" : exp.status === "pending" ? "rgba(255,215,106,.18)" : "rgba(255,79,109,.18)",
+                                  color: exp.status === "paid" ? "#2EF2B1" : exp.status === "pending" ? "#FFD66B" : "#FF4F6D",
+                                  border: exp.status === "paid" ? "1px solid rgba(46,242,177,.4)" : exp.status === "pending" ? "1px solid rgba(255,215,106,.4)" : "1px solid rgba(255,79,109,.4)"
+                                }}>
+                                  {exp.status === "paid" ? "✓ จ่ายแล้ว" : exp.status === "pending" ? "⏳ รอจ่าย" : "✗ ยกเลิก"}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </GlassCard>
@@ -1093,7 +1137,7 @@ export default function CEEmpire() {
           {/* SETTINGS PAGE */}
           {page === "settings" && (
             <div className="animate-fade-up">
-              <GlassCard>
+              <GlassCard depth="mid">
                 <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 12 }}>ตั้งค่า</div>
                 <div style={{ display: "grid", gap: 10 }}>
                   <div style={{ padding: "14px", borderRadius: 18, background: "rgba(5,8,22,.42)", border: "1px solid rgba(122,181,255,.14)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1215,7 +1259,7 @@ function AgentsPage({ agents, onRefresh, expenses }: { agents: any[]; onRefresh:
 
   return (
     <div className="animate-fade-up">
-      <GlassCard>
+      <GlassCard depth="foreground">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <div>
             <div style={{ fontSize: 20, fontWeight: 900 }}>ทีมงาน</div>
@@ -1307,7 +1351,7 @@ function DocumentsPage({ expenses, accounts, agents, onRefresh }: { expenses: an
 
   return (
     <div className="animate-fade-up">
-      <GlassCard>
+      <GlassCard depth="foreground">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <div>
             <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-.04em" }}>เอกสาร / สลิป</div>

@@ -82,12 +82,12 @@
 - [x] Detect bank brand จากโลโก้บนบัตรอัตโนมัติ
 
 ## AI Scan Animation (Sci-fi loading)
-- [ ] เพิ่ม overlay scan animation เมื่อ AI กำลังประมวลผล
-- [ ] Scan-line วิ่งบนภาพ preview จากบน-ลงล่าง วนซ้ำ
-- [ ] Corner brackets ตัวล็อค focus 4 มุม
-- [ ] Status text เปลี่ยนตามขั้นตอน ("กำลังอัพโหลด" → "กำลังวิเคราะห์" → "กำลังอ่านข้อมูล")
-- [ ] Glow pulse animation รอบ container
-- [ ] Particle/grid overlay สไตล์ sci-fi
+- [x] เพิ่ม overlay scan animation เมื่อ AI กำลังประมวลผล
+- [x] Scan-line วิ่งบนภาพ preview จากบน-ลงล่าง วนซ้ำ
+- [x] Corner brackets ตัวล็อค focus 4 มุม
+- [x] Status text เปลี่ยนตามขั้นตอน ("กำลังอัพโหลด" → "กำลังวิเคราะห์" → "กำลังอ่านข้อมูล")
+- [x] Glow pulse animation รอบ container
+- [x] Particle/grid overlay สไตล์ sci-fi
 
 
 ## UI Polish - Glass Depth Layering & Animations
@@ -97,3 +97,11 @@
 - [x] Compact table: CSS ready สำหรับ table ขนาดกะทัดรัด (No | เวลา | ฝาก | U | Profit | Sent)
 - [x] Table row hover: highlight + ripple effect (CSS .compact-table tbody tr:hover)
 - [x] Responsive table: scroll horizontal บน mobile (CSS ready)
+
+## Glass Depth Integration
+- [x] Glass depth layering integration: ใช้ depth prop ใน GlassCard components ทั้งหมด (dashboard, accounts, payment, agents, documents, settings)
+- [x] Animated glow pulse รอบ preview container ระหว่างสแกน (scan-container-pulse keyframe)
+
+## Remaining Tasks
+- [x] Compact table implementation (ใช้ CSS ready ในหน้า payment) - แสดง No | เวลา | ฝาก | U | Profit | Sent | สถานะ
+- [ ] Banking Skill creation (banking-dashboard-builder)
