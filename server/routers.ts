@@ -11,6 +11,7 @@ import {
   getDashboardStats,
 } from "./db";
 import { storagePut } from "./storage";
+import { invokeLLM } from "./_core/llm";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
@@ -193,6 +194,82 @@ export const appRouter = router({
   // ===== DASHBOARD =====
   dashboard: router({
     stats: protectedProcedure.query(({ ctx }) => getDashboardStats(ctx.user.id)),
+  }),
+
+  // ===== AI CARD SCANNER =====
+  ai: router({
+    scanCard: protectedProcedure
+      .input(z.object({
+        base64Data: z.string(),
+        mimeType: z.string().default("image/jpeg"),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const dataUrl = `data:${input.mimeType};base64,${input.base64Data}`;
+          const response = await invokeLLM({
+            messages: [
+              {
+                role: "system",
+                content: `คุณคือ AI สำหรับอ่านข้อมูลจากบัตรธนาคาร/บัตรประชาชนไทย อ่านภาพแล้วตอบเป็น JSON เท่านั้น ไม่ต้องอธิบาย
+
+ธนาคารไทยและรหัส:
+- KBANK = กสิกรไทย (เขียว)
+- SCB = ไทยพาณิชย์ (ม่วง)
+- KTB = กรุงไทย (ฟ้า)
+- BBL = กรุงเทพ (น้ำเงิน)
+- TTB = ทหารไทยธนชาต (ฟ้า+ส้ม)
+- GSB = ออมสิน (ชมพู)
+- BAY = กรุงศรี (เหลือง)
+- BAAC = ธ.ก.ส. (เขียว)
+- CIMB = CIMB Thai (แดง)
+- UOB = ยูโอบี (น้ำเงิน)
+- TISCO = ทิสโก้ (แดง)
+- LHFG = LH Bank (ส้ม)`,
+              },
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: "อ่านภาพบัตรนี้และสกัดข้อมูลออกมาเป็น JSON ตาม schema ถ้าอ่านไม่ออกให้ใช้ null",
+                  },
+                  {
+                    type: "image_url",
+                    image_url: { url: dataUrl, detail: "high" },
+                  },
+                ],
+              },
+            ],
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: "card_info",
+                strict: true,
+                schema: {
+                  type: "object",
+                  properties: {
+                    name: { type: ["string", "null"], description: "ชื่อ-นามสกุลบนบัตร หรือ cardholder name" },
+                    accountNumber: { type: ["string", "null"], description: "เลขบัญชี/เลขบัตร (ตัวเลขล้วนๆ ไม่มีขีด)" },
+                    bankCode: { type: ["string", "null"], description: "รหัสธนาคาร ตามรายการข้างต้น" },
+                    bankName: { type: ["string", "null"], description: "ชื่อธนาคารภาษาไทย" },
+                    expiryDate: { type: ["string", "null"], description: "วันหมดอายุบัตร รูปแบบ MM/YY" },
+                    cardType: { type: ["string", "null"], description: "ประเภทบัตร: debit, credit, savings, idcard" },
+                    confidence: { type: "number", description: "ความมั่นใจ 0-1" },
+                  },
+                  required: ["name", "accountNumber", "bankCode", "bankName", "expiryDate", "cardType", "confidence"],
+                  additionalProperties: false,
+                },
+              },
+            },
+          });
+          const content = response.choices[0]?.message?.content || "{}";
+          const parsed = typeof content === "string" ? JSON.parse(content) : content;
+          return { success: true, data: parsed };
+        } catch (error: any) {
+          console.error("[scanCard] error:", error);
+          return { success: false, error: error?.message || "สแกนบัตรล้มเหลว" };
+        }
+      }),
   }),
 });
 

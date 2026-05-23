@@ -50,3 +50,40 @@
 
 ## Testing
 - [x] Vitest tests: auth.logout, auth.me, bankData validation (6 tests passed)
+
+## UI Polish - Bank Icons v2
+- [ ] อัพเกรดโลโก้ธนาคารเป็น app-icon style (rounded square + สีพื้น brand จริงของแต่ละธนาคาร)
+- [ ] กสิกร: พื้นเขียว KBank + ตัว K สีขาว
+- [ ] SCB: พื้นม่วง + ใบโพธิ์ทอง
+- [ ] กรุงไทย: พื้นฟ้า + นกวายุภักษ์ขาว
+- [ ] กรุงเทพ: พื้นน้ำเงิน + ดอกบัวขาว
+- [ ] TTB: พื้นขาว + ตัว ttb สีฟ้า/ส้ม
+- [ ] ออมสิน: พื้นชมพู + ตราเสมาทอง
+- [ ] กรุงศรี: พื้นเหลือง + โลโก้ดำ
+- [ ] ธ.ก.ส.: พื้นเขียว + ใบไม้
+
+## Mobile-First Redesign
+- [ ] ลบ desktop sidebar ออก ใช้ bottom nav บนทุก viewport
+- [ ] เพิ่ม mobile header แบบ sticky พร้อม logo + user menu
+- [ ] ขยาย touch target ปุ่มทุกตัว (อย่างน้อย 44x44px)
+- [ ] ปรับ padding/spacing ให้เหมาะกับมือถือ
+- [ ] ขยายฟอนต์ให้อ่านง่าย
+- [ ] Bottom sheet สำหรับฟอร์ม account/expense แทน modal กลางจอ
+
+## Realistic Bank Logos
+- [ ] KBank (กสิกร): พื้นเขียว #138F2D + ตัว K สีขาว
+- [ ] SCB (ไทยพาณิชย์): พื้นม่วง #4E2A84 + ใบโพธิ์ทอง
+- [ ] KTB (กรุงไทย): พื้นฟ้า #00A9E0 + นกวายุภักษ์ขาว
+- [ ] BBL (กรุงเทพ): พื้นน้ำเงิน #1E4598 + ดอกบัวขาว
+- [ ] TTB: พื้นขาว + ตัว ttb สีฟ้า/ส้ม
+- [ ] GSB (ออมสิน): พื้นชมพู #DC0067 + ตราเสมาทอง
+- [ ] BAY (กรุงศรี): พื้นเหลือง #FEC10E + โลโก้ดำ
+- [ ] BAAC (ธ.ก.ส.): พื้นเขียว + ใบไม้
+
+## AI Card Scanner (Auto-fill)
+- [ ] Backend: tRPC procedure `accounts.scanCard` ใช้ invokeLLM vision อ่านข้อมูลจากภาพ
+- [ ] Return structured JSON: ชื่อ, นามสกุล, เลขบัตร/บัญชี, ธนาคาร, วันหมดอายุ
+- [ ] Frontend: ปุ่ม "📷 สแกนบัตร" ในฟอร์มเพิ่มบัญชี
+- [ ] อัพโหลดภาพ → แสดง loading → กรอกข้อมูลอัตโนมัติลงฟอร์ม
+- [ ] รองรับทั้ง: บัตรเดบิต/เครดิต, บัตรประชาชน, สมุดบัญชีธนาคาร
+- [ ] Detect bank brand จากโลโก้บนบัตรอัตโนมัติ

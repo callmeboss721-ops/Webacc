@@ -270,12 +270,21 @@
 @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
 @media (min-width: 1024px) { .container { max-width: 1280px; } }
 
-/* Mobile Bottom Nav */
-.mobile-bottom-nav { display: none; }
-@media (max-width: 768px) {
-  .mobile-bottom-nav { display: block !important; }
-  .desktop-sidebar { display: none !important; }
-  .main-layout { grid-template-columns: 1fr !important; }
+/* Mobile-First: Show bottom nav always, hide desktop sidebar always */
+.mobile-bottom-nav { display: block !important; }
+.desktop-sidebar { display: none !important; }
+.main-layout { grid-template-columns: 1fr !important; max-width: 540px !important; padding: 8px 10px 110px !important; }
+
+/* Touch-friendly: bigger tap targets */
+button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+input, textarea, select { font-size: 16px !important; /* Prevents iOS zoom */ }
+
+/* Safe area for notched devices */
+.mobile-bottom-nav { padding-bottom: max(8px, env(safe-area-inset-bottom)) !important; }
+
+/* Tablet+: still keep mobile look but wider */
+@media (min-width: 768px) {
+  .main-layout { max-width: 640px !important; }
 }
 
 /* Animations */

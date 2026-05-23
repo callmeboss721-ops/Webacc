@@ -12,6 +12,7 @@ import {
   CheckCircle, Clock, XCircle, Star, Upload, X, ChevronDown,
   ChevronUp, Wallet, TrendingUp, TrendingDown, Users, Zap,
   Building2, Receipt, AlertCircle, MoreVertical, QrCode,
+  Camera, Sparkles, Loader2,
 } from "lucide-react";
 
 // ===== TYPES =====
@@ -174,6 +175,46 @@ function AccountFormModal({ open, onClose, editData, onSuccess }: {
   const createMut = trpc.accounts.create.useMutation({ onSuccess: () => { toast.success("เพิ่มบัญชีสำเร็จ"); onSuccess(); onClose(); } });
   const updateMut = trpc.accounts.update.useMutation({ onSuccess: () => { toast.success("อัพเดตบัญชีสำเร็จ"); onSuccess(); onClose(); } });
 
+  // ===== AI CARD SCANNER =====
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const scanMut = trpc.ai.scanCard.useMutation();
+
+  const handleScanCard = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) { toast.error("ไฟล์ใหญ่เกิน 8MB"); return; }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    toast.loading("AI กำลังอ่านบัตร...", { id: "scan" });
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const result = reader.result as string;
+        const base64Data = result.split(",")[1];
+        const res = await scanMut.mutateAsync({ base64Data, mimeType: file.type || "image/jpeg" });
+        if (res.success && res.data) {
+          const d: any = res.data;
+          setForm((p: any) => ({
+            ...p,
+            name: d.name || p.name,
+            bankCode: d.bankCode || p.bankCode,
+            bankName: d.bankName || p.bankName,
+            accountNumber: d.accountNumber ? String(d.accountNumber).replace(/[^0-9]/g, "") : p.accountNumber,
+          }));
+          const conf = Math.round((d.confidence || 0) * 100);
+          toast.success(`✨ อ่านบัตรสำเร็จ (มั่นใจ ${conf}%)`, { id: "scan" });
+        } else {
+          toast.error((res as any).error || "อ่านบัตรไม่สำเร็จ", { id: "scan" });
+        }
+      } catch (err: any) {
+        toast.error(err?.message || "สแกนล้มเหลว", { id: "scan" });
+      }
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.bankCode || !form.accountNumber) { toast.error("กรุณากรอกข้อมูลที่จำเป็น"); return; }
@@ -215,6 +256,44 @@ function AccountFormModal({ open, onClose, editData, onSuccess }: {
         </div>
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: 16, overflowY: "auto", flex: 1 }}>
+          {/* AI Scan Card Banner */}
+          <div style={{
+            marginBottom: 14, padding: 12, borderRadius: 18,
+            background: "linear-gradient(135deg, rgba(139,92,255,.18), rgba(56,241,255,.10) 60%, rgba(255,215,106,.10))",
+            border: "1px solid rgba(139,92,255,.38)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 14, display: "grid", placeItems: "center", background: "linear-gradient(135deg, #8B5CFF, #38F1FF)", boxShadow: "0 0 18px rgba(139,92,255,.5)", flexShrink: 0 }}>
+                {scanMut.isPending ? <Loader2 size={20} color="white" className="animate-spin" /> : <Sparkles size={20} color="white" />}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 900, fontSize: 12.5, color: "#F8FCFF", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  AI กรอกข้อมูลอัตโนมัติ
+                  <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 6, background: "linear-gradient(90deg, #FFD66B, #FFA73A)", color: "#1A0F00", fontWeight: 900 }}>NEW</span>
+                </div>
+                <div style={{ fontSize: 10.5, color: "#9FB2CE", marginTop: 2 }}>ถ่ายรูปบัตร/สมุดบัญชี → กรอกให้ทันที</div>
+              </div>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleScanCard} style={{ display: "none" }} />
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={scanMut.isPending} style={{
+                padding: "10px 12px", borderRadius: 12, fontWeight: 900, fontSize: 11.5,
+                background: scanMut.isPending ? "rgba(139,92,255,.3)" : "linear-gradient(135deg, #8B5CFF, #38F1FF)",
+                color: "white", border: "none", cursor: scanMut.isPending ? "wait" : "pointer",
+                display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap",
+                boxShadow: scanMut.isPending ? "none" : "0 4px 14px rgba(139,92,255,.4)", flexShrink: 0,
+              }}>
+                {scanMut.isPending ? <><Loader2 size={13} className="animate-spin" /> สแกน</> : <><Camera size={13} /> สแกน</>}
+              </button>
+            </div>
+            {previewUrl && (
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                <img src={previewUrl} alt="card preview" style={{ width: 64, height: 40, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(56,241,255,.3)" }} />
+                <div style={{ fontSize: 10.5, color: "#2EF2B1", fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
+                  <CheckCircle size={11} /> อ่านข้อมูลจากภาพแล้ว
+                </div>
+              </div>
+            )}
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ gridColumn: "1/-1" }}>
               <label style={labelStyle}>ชื่อบัญชี / ชื่อเจ้าของ *</label>
