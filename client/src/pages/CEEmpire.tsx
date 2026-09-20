@@ -4,6 +4,7 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { BankLogo, BankSelect } from "@/components/BankLogo";
+import { TransactionsPage, VirtualCardPage } from "@/components/FinanceWorkspace";
 import { getBankByCode, THAI_BANKS } from "../../../shared/bankData";
 import {
   Home, BarChart2, CreditCard, ArrowLeftRight, FileText,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 
 // ===== TYPES =====
-type Page = "dashboard" | "accounts" | "payment" | "agents" | "documents" | "settings";
+type Page = "dashboard" | "accounts" | "payment" | "virtual-card" | "transactions" | "agents" | "documents" | "settings";
 
 // ===== ANIMATED METRIC CARD (KPI) =====
 function AnimatedMetricCard({ label, value, icon: Icon, color }: any) {
@@ -841,6 +842,8 @@ export default function CEEmpire() {
     { id: "dashboard", label: "หน้าหลัก", icon: Home, color: "cyan" },
     { id: "accounts", label: "บัญชี", icon: Building2, color: "cyan" },
     { id: "payment", label: "ชำระเงิน", icon: ArrowLeftRight, color: "gold" },
+    { id: "virtual-card", label: "Virtual Card", icon: CreditCard, color: "gold" },
+    { id: "transactions", label: "ธุรกรรม", icon: Receipt, color: "cyan" },
     { id: "agents", label: "ทีมงาน", icon: Users, color: "violet" },
     { id: "documents", label: "เอกสาร", icon: FileText, color: "cyan" },
     { id: "settings", label: "ตั้งค่า", icon: Settings, color: "violet" },
@@ -1123,6 +1126,12 @@ export default function CEEmpire() {
               </GlassCard>
             </div>
           )}
+
+          {/* VIRTUAL CARD PAGE */}
+          {page === "virtual-card" && <VirtualCardPage />}
+
+          {/* TRANSACTIONS PAGE */}
+          {page === "transactions" && <TransactionsPage />}
 
           {/* AGENTS PAGE */}
           {page === "agents" && (
