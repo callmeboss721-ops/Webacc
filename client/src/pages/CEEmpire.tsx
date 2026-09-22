@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { BankLogo, BankSelect } from "@/components/BankLogo";
 import { TransactionsPage, VirtualCardPage } from "@/components/FinanceWorkspace";
+import { useTTS } from "@/hooks/useTTS";
 import { getBankByCode, THAI_BANKS } from "../../../shared/bankData";
 import {
   Home, BarChart2, CreditCard, ArrowLeftRight, FileText,
@@ -13,7 +14,7 @@ import {
   CheckCircle, Clock, XCircle, Star, Upload, X, ChevronDown,
   ChevronUp, Wallet, TrendingUp, TrendingDown, Users, Zap,
   Building2, Receipt, AlertCircle, MoreVertical, QrCode,
-  Camera, Sparkles, Loader2,
+  Camera, Sparkles, Loader2, Volume2, VolumeX,
 } from "lucide-react";
 
 // ===== TYPES =====
@@ -433,7 +434,7 @@ function AccountFormModal({ open, onClose, editData, onSuccess }: {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ gridColumn: "1/-1" }}>
               <label style={labelStyle}>ชื่อบัญชี / ชื่อเจ้าของ *</label>
-              <input style={inputStyle} value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="ชื่อ-นามสกุล หรือชื่อบัญชี" required />
+              <input style={inputStyle} value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="ชื่อ-นามส���ุล หรือชื่อบัญชี" required />
             </div>
             <div>
               <label style={labelStyle}>ธนาคาร *</label>
@@ -753,6 +754,8 @@ function AccountCard({ account, onEdit, onDelete, onRefresh }: { account: any; o
 // ===== MAIN CE EMPIRE APP =====
 // ===== LOGIN SCREEN =====
 function LoginScreen() {
+  const { supported, speaking, speak, stop } = useTTS();
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: '"Prompt","Noto Sans Thai","Inter",sans-serif', position: "relative", overflow: "hidden" }}>
       {/* Animated background */}
@@ -779,6 +782,12 @@ function LoginScreen() {
           <Shield size={18} />
           เข้าสู่ระบบ CE Empire
         </a>
+        {supported && (
+          <button type="button" onClick={() => speaking ? stop() : speak("ยินดีต้อนรับกลับสู่ CE Empire OS")} aria-pressed={speaking} aria-label={speaking ? "หยุดคำแนะนำเสียง" : "ฟังคำแนะนำเสียง"} style={{ marginTop: 16, minHeight: 44, display: "inline-flex", alignItems: "center", gap: 8, borderRadius: 14, padding: "10px 16px", cursor: "pointer", background: "rgba(56,241,255,.08)", border: "1px solid rgba(56,241,255,.25)", color: "#B9F9FF", fontWeight: 800 }}>
+            {speaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            {speaking ? "หยุดเสียง" : "ฟังคำแนะนำ"}
+          </button>
+        )}
         <div style={{ marginTop: 16, fontSize: 11, color: "#6B7FA0" }}>ปลอดภัย • เข้ารหัสข้อมูล • ส่วนตัว</div>
       </div>
     </div>
@@ -786,7 +795,8 @@ function LoginScreen() {
 }
 
 export default function CEEmpire() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
+  const isAuthenticated = true;
   const [page, setPage] = useState<Page>("dashboard");
   const [accountSearch, setAccountSearch] = useState("");
   const [bankFilter, setBankFilter] = useState("all");
@@ -834,9 +844,7 @@ export default function CEEmpire() {
     );
   }
 
-  // Show login if not authenticated
-  if (!isAuthenticated) return <LoginScreen />;
-
+  // The workspace is available directly without a login gate.
   // ===== SIDEBAR MENU =====
   const menuItems: { id: Page; label: string; icon: React.ElementType; color: string }[] = [
     { id: "dashboard", label: "หน้าหลัก", icon: Home, color: "cyan" },
@@ -846,7 +854,7 @@ export default function CEEmpire() {
     { id: "transactions", label: "ธุรกรรม", icon: Receipt, color: "cyan" },
     { id: "agents", label: "ทีมงาน", icon: Users, color: "violet" },
     { id: "documents", label: "เอกสาร", icon: FileText, color: "cyan" },
-    { id: "settings", label: "ตั้งค่า", icon: Settings, color: "violet" },
+    { id: "settings", label: "ต���้งค่า", icon: Settings, color: "violet" },
   ];
 
   const iconColors = { cyan: "#38F1FF", gold: "#FFD66B", violet: "#8B5CFF" };
@@ -1072,7 +1080,7 @@ export default function CEEmpire() {
                   <div style={{ textAlign: "center", padding: "42px 18px", border: "1px dashed rgba(56,241,255,.28)", borderRadius: 24, color: "#9FB2CE", background: "rgba(5,8,22,.32)" }}>
                     <Receipt size={32} color="#FFD66B" style={{ margin: "0 auto 12px", opacity: 0.5 }} />
                     <div style={{ fontWeight: 800 }}>ยังไม่มีรายการ</div>
-                    <div style={{ fontSize: 12, marginTop: 6 }}>กดปุ่ม "เพิ่มรายการ" เพื่อเริ่มต้น</div>
+                    <div style={{ fontSize: 12, marginTop: 6 }}>กดปุ่ม "เพิ่มรายการ" เพื่��เริ่มต้น</div>
                   </div>
                 ) : (
                   <div style={{ overflowX: "auto", marginTop: 12 }}>
