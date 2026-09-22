@@ -795,7 +795,8 @@ function LoginScreen() {
 }
 
 export default function CEEmpire() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
+  const isAuthenticated = true;
   const [page, setPage] = useState<Page>("dashboard");
   const [accountSearch, setAccountSearch] = useState("");
   const [bankFilter, setBankFilter] = useState("all");
@@ -843,9 +844,7 @@ export default function CEEmpire() {
     );
   }
 
-  // Show login if not authenticated
-  if (!isAuthenticated) return <LoginScreen />;
-
+  // The workspace is available directly without a login gate.
   // ===== SIDEBAR MENU =====
   const menuItems: { id: Page; label: string; icon: React.ElementType; color: string }[] = [
     { id: "dashboard", label: "หน้าหลัก", icon: Home, color: "cyan" },
@@ -855,7 +854,7 @@ export default function CEEmpire() {
     { id: "transactions", label: "ธุรกรรม", icon: Receipt, color: "cyan" },
     { id: "agents", label: "ทีมงาน", icon: Users, color: "violet" },
     { id: "documents", label: "เอกสาร", icon: FileText, color: "cyan" },
-    { id: "settings", label: "ตั้งค่า", icon: Settings, color: "violet" },
+    { id: "settings", label: "ต���้งค่า", icon: Settings, color: "violet" },
   ];
 
   const iconColors = { cyan: "#38F1FF", gold: "#FFD66B", violet: "#8B5CFF" };
