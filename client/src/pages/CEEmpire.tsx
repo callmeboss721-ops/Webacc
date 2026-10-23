@@ -815,6 +815,7 @@ export default function CEEmpire() {
   const refreshAll = useCallback(() => {
     utils.accounts.list.invalidate();
     utils.dashboard.stats.invalidate();
+    utils.dashboard.twinSummary.invalidate();
     utils.expenses.list.invalidate();
     utils.agents.list.invalidate();
   }, [utils]);
@@ -956,7 +957,7 @@ export default function CEEmpire() {
           {/* DASHBOARD PAGE */}
           {page === "dashboard" && (
             <div className="animate-fade-up">
-              <TwinConsole navigate={setPage} />
+              <TwinConsole navigate={setPage} onAddAccount={() => { setEditAccount(null); setShowAccountForm(true); }} onAddExpense={() => setShowExpenseForm(true)} onScanCard={() => { setEditAccount(null); setShowAccountForm(true); }} onUploadSlip={() => setShowExpenseForm(true)} />
 
               {/* Recent Accounts */}
               {(accountsQ.data?.length ?? 0) > 0 && (
