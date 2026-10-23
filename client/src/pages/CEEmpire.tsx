@@ -815,6 +815,7 @@ export default function CEEmpire() {
   const refreshAll = useCallback(() => {
     utils.accounts.list.invalidate();
     utils.dashboard.stats.invalidate();
+    utils.dashboard.twinSummary.invalidate();
     utils.expenses.list.invalidate();
     utils.agents.list.invalidate();
   }, [utils]);
@@ -888,8 +889,8 @@ export default function CEEmpire() {
         </div>
       </header>
 
-      {page !== "dashboard" && (
       {/* Hero Stats */}
+      {page !== "dashboard" && (
       <section className="glass" style={{ margin: "12px 12px 0", borderRadius: 28, padding: 16, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 16% 14%, rgba(56,241,255,.18), transparent 32%), radial-gradient(circle at 88% 22%, rgba(139,92,255,.18), transparent 31%)", pointerEvents: "none" }} />
         <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -956,7 +957,7 @@ export default function CEEmpire() {
           {/* DASHBOARD PAGE */}
           {page === "dashboard" && (
             <div className="animate-fade-up">
-              <TwinConsole navigate={setPage} />
+              <TwinConsole navigate={setPage} onAddAccount={() => { setEditAccount(null); setShowAccountForm(true); }} onAddExpense={() => setShowExpenseForm(true)} onScanCard={() => { setEditAccount(null); setShowAccountForm(true); }} onUploadSlip={() => setShowExpenseForm(true)} />
 
               {/* Recent Accounts */}
               {(accountsQ.data?.length ?? 0) > 0 && (
