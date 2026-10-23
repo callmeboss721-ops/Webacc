@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { BankLogo, BankSelect } from "@/components/BankLogo";
 import { TransactionsPage, VirtualCardPage } from "@/components/FinanceWorkspace";
 import { useTTS } from "@/hooks/useTTS";
+import { TwinConsole } from "@/components/TwinConsole";
 import { getBankByCode, THAI_BANKS } from "../../../shared/bankData";
 import {
   Home, BarChart2, CreditCard, ArrowLeftRight, FileText,
@@ -952,41 +953,7 @@ export default function CEEmpire() {
           {/* DASHBOARD PAGE */}
           {page === "dashboard" && (
             <div className="animate-fade-up">
-              <GlassCard depth="foreground">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-.04em" }}>Dashboard</div>
-                    <div style={{ fontSize: 12, color: "#AFC0D8", marginTop: 4 }}>ภาพรวมระบบ CE Empire</div>
-                  </div>
-                  <NeonBtn icon={RefreshCw} onClick={refreshAll} color="cyan" title="รีเฟรช" />
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 16 }}>
-                  <AnimatedMetricCard label="บัญชีทั้งหมด" value={stats?.totalAccounts ?? 0} icon={Building2} color="cyan" />
-                  <AnimatedMetricCard label="ยอดจ่ายแล้ว" value={`฿${(stats?.totalPaid ?? 0).toLocaleString()}`} icon={CheckCircle} color="green" />
-                  <AnimatedMetricCard label="ยอดค้างจ่าย" value={`฿${(stats?.totalDue ?? 0).toLocaleString()}`} icon={AlertCircle} color="gold" />
-                  <AnimatedMetricCard label="สลิปหลักฐาน" value={stats?.totalProof ?? 0} icon={FileText} color="violet" />
-                </div>
-
-                {/* Quick Actions */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
-                  {[
-                    { label: "เพิ่มบัญชี", sub: "จัดการบัญชีธนาคาร", icon: Building2, color: "#38F1FF", action: () => { setEditAccount(null); setShowAccountForm(true); } },
-                    { label: "ชำระเงิน", sub: "เพิ่มรายการ/สลิป", icon: ArrowLeftRight, action: () => setPage("payment"), color: "#FFD66B" },
-                    { label: "ทีมงาน", sub: "จัดการ agent", icon: Users, action: () => setPage("agents"), color: "#8B5CFF" },
-                    { label: "Export", sub: "ดาวน์โหลดข้อมูล", icon: Download, action: handleExport, color: "#2EF2B1" },
-                  ].map((qa, i) => (
-                    <button key={i} onClick={qa.action} style={{ textAlign: "left", display: "grid", gap: 4, minHeight: 100, borderRadius: 22, padding: 14, cursor: "pointer", transition: "all .18s", background: "linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.025)), radial-gradient(circle at 20% 0%, rgba(56,241,255,.18), transparent 46%), rgba(4,12,29,.76)", border: "1px solid rgba(122,181,255,.17)" }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 14, display: "grid", placeItems: "center", background: `${qa.color}20`, border: `1px solid ${qa.color}40`, boxShadow: `0 0 18px ${qa.color}18` }}>
-                        <qa.icon size={18} color={qa.color} />
-                      </div>
-                      <div style={{ fontSize: 14, fontWeight: 900, color: "#F8FCFF" }}>{qa.label}</div>
-                      <div style={{ fontSize: 11, color: "#9FB2CE", fontWeight: 700, whiteSpace: "normal" }}>{qa.sub}</div>
-                    </button>
-                  ))}
-                </div>
-              </GlassCard>
+              <TwinConsole navigate={setPage} />
 
               {/* Recent Accounts */}
               {(accountsQ.data?.length ?? 0) > 0 && (
