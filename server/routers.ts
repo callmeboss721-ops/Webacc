@@ -8,7 +8,7 @@ import {
   getAgents, getAgentById, createAgent, updateAgent, deleteAgent,
   getExpenses, createExpense, updateExpense, deleteExpense,
   createSlip, getSlipsByExpense,
-  getDashboardStats,
+  getDashboardStats, getTwinSummary,
 } from "./db";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
@@ -194,6 +194,7 @@ export const appRouter = router({
   // ===== DASHBOARD =====
   dashboard: router({
     stats: protectedProcedure.query(({ ctx }) => getDashboardStats(ctx.user.id)),
+    twinSummary: protectedProcedure.query(({ ctx }) => getTwinSummary(ctx.user.id)),
   }),
 
   // ===== AI CARD SCANNER =====
