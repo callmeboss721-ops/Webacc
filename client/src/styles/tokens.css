@@ -39,3 +39,33 @@
 @keyframes twin-dash { to { stroke-dashoffset:-240; } }
 @media(max-width:389px) { .twin-scene { display:none; } .twin-mobile-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:12px; } .twin-mobile-list button { min-height:56px; border:1px solid var(--hairline); border-radius:12px; color:var(--text-1); background:var(--bg-2); padding:8px; display:flex; flex-direction:column; gap:4px; font-size:11px; } }
 @media(prefers-reduced-motion:reduce) { .twin-island,.twin-route { animation:none!important; } }
+
+/* Source-derived rings. Circles do not imply a fabricated completion %. */
+.twin-ring-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:14px 0; }
+.twin-ring-item { min-width:0; border:1px solid var(--hairline); background:var(--bg-1); border-radius:12px; padding:12px 8px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; }
+.twin-ring { width:94px; height:94px; max-width:100%; aspect-ratio:1; border-radius:50%; border:3px solid rgba(0,240,255,.35); display:grid; place-items:center; padding:10px; background:radial-gradient(circle,rgba(0,240,255,.05),transparent 70%); }
+.twin-ring .twin-number { font-size:12px; overflow-wrap:anywhere; }
+.twin-ring-item small { color:var(--text-3); font-size:10px; overflow-wrap:anywhere; line-height:1.4; }
+.twin-ring-item .twin-heading { font-size:11px; color:var(--text-2); }
+.twin-commandbar { display:flex; overflow-x:auto; gap:8px; padding:2px 0 12px; scrollbar-width:thin; }
+.twin-commandbar button,.twin-command-dialog button { flex-shrink:0; border:1px solid var(--hairline); border-radius:100px; background:var(--bg-2); color:var(--text-1); min-height:44px; padding:8px 12px; cursor:pointer; }
+.twin-commandbar button:focus-visible,.twin-command-dialog button:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+.twin-command-overlay { position:fixed; inset:0; z-index:110; background:rgba(0,0,0,.78); display:flex; justify-content:center; align-items:flex-start; padding:clamp(20px,12vh,100px) 12px 12px; }
+.twin-command-dialog { border:1px solid var(--hairline); border-radius:16px; width:min(480px,100%); background:var(--bg-1); color:var(--text-1); padding:12px; box-shadow:0 24px 80px #000a; }
+.twin-command-dialog button { width:100%; margin-top:10px; }
+.twin-activity { border:1px solid var(--hairline); background:var(--bg-1); border-radius:16px; padding:14px; }
+.twin-activity-head { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.twin-activity h2 { margin:0; font-family:"Space Grotesk",sans-serif; letter-spacing:.12em; font-size:14px; }
+.twin-activity-head span,.twin-activity p { font-size:11px; color:var(--text-3); }
+.twin-activity ol { list-style:none; margin:10px 0 0; padding:0; }
+.twin-activity li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:11px 0; border-top:1px solid var(--hairline); }
+.twin-activity li strong { display:block; font-size:12px; }
+.twin-activity li small { color:var(--text-3); display:block; margin-top:4px; font-size:10px; }
+.twin-activity li .twin-number { font-size:12px; }
+@media(max-width:479px) {
+  .twin-scene { display:none; }
+  .twin-mobile-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:12px; }
+  .twin-mobile-list button { min-height:56px; border:1px solid var(--hairline); border-radius:12px; color:var(--text-1); background:var(--bg-2); padding:8px; display:flex; flex-direction:column; gap:4px; font-size:11px; overflow-wrap:anywhere; }
+  .twin-ring-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(min-width:480px) and (max-width:650px) { .twin-island { min-width:90px; width:27%; } .twin-island .twin-heading { font-size:10px; letter-spacing:0; } }
