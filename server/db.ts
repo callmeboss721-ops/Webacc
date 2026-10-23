@@ -186,3 +186,36 @@ export async function getDashboardStats(userId: number) {
     totalProof: Number(slipCount?.count ?? 0),
   };
 }
+
+/** Per-user aggregates. Missing DB must not be displayed as zero. */
+export async function getTwinSummary(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  const [a] = await db.select({
+    count: sql<number>`COUNT(*)`,
+    balance: sql<string>`COALESCE(SUM(balance), 0)`,
+  }).from(accounts).where(eq(accounts.userId, userId));
+  const [g] = await db.select({
+    active: sql<number>`COUNT(CASE WHEN status = 'active' THEN 1 END)`,
+  }).from(agents).where(eq(agents.userId, userId));
+  const [e] = await db.select({
+    pending: sql<number>`COUNT(CASE WHEN status = 'pending' THEN 1 END)`,
+    monthOut: sql<string>`COALESCE(SUM(CASE WHEN status = 'paid' AND createdAt >= DATE_FORMAT(UTC_TIMESTAMP(), '%Y-%m-01') AND createdAt < DATE_FORMAT(UTC_TIMESTAMP() + INTERVAL 1 MONTH, '%Y-%m-01') THEN amount ELSE 0 END), 0)`,
+    monthVolume: sql<string>`COALESCE(SUM(CASE WHEN createdAt >= DATE_FORMAT(UTC_TIMESTAMP(), '%Y-%m-01') AND createdAt < DATE_FORMAT(UTC_TIMESTAMP() + INTERVAL 1 MONTH, '%Y-%m-01') THEN amount ELSE 0 END), 0)`,
+  }).from(expenses).where(eq(expenses.userId, userId));
+  const [s] = await db.select({
+    unmatched: sql<number>`COUNT(CASE WHEN expenseId IS NULL THEN 1 END)`,
+  }).from(slips).where(eq(slips.userId, userId));
+  return {
+    accountCount: Number(a?.count ?? 0),
+    balance: a?.balance ?? "0",
+    activeAgents: Number(g?.active ?? 0),
+    pendingPayments: Number(e?.pending ?? 0),
+    monthOut: e?.monthOut ?? "0",
+    monthVolume: e?.monthVolume ?? "0",
+    unmatchedSlips: Number(s?.unmatched ?? 0),
+    monthIn: null,
+    cardUsage: null,
+    asOf: new Date().toISOString(),
+  };
+}
