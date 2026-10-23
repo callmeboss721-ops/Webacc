@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
-import type { ReactNode } from "react";
 
 type Destination = "accounts" | "payment" | "virtual-card" | "transactions" | "agents" | "documents";
 const modules: { id: Destination; title: string; x: number; y: number; color: string; shape: string }[] = [
